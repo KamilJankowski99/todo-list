@@ -3,6 +3,7 @@ const logger = require('koa-logger')
 const Koa = require('koa')
 const favicon = require('koa-favicon')
 const serve = require('koa-static')
+require('./store').init()
 
 const app = new Koa()
 app.use(favicon(path.join(__dirname, '..', 'client', 'rocket.ico')))
