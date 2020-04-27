@@ -6,9 +6,9 @@ router.post('/', async (ctx) => {
     await store.addTask(ctx.request.body)
     ctx.status = 200
   })
-  
+
 router.get('/', async (ctx) => {
-  ctx.status = 501
+  ctx.response.body = await store.listTasks()
 })
 
 router.post('/', async (ctx) => {
