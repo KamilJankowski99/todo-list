@@ -20,6 +20,40 @@ const addTask = async () => {
   return await fetch('/api/tasks', { method: 'POST', headers, body })
 }
 
+const listTasks = async () => {
+  tasksList.innerHTML = ''
+  tasksListMsg.classList.remove('is-danger')
+  tasksListMsg.classList.add('is-hidden')
+
+  fetch('/api/tasks')
+    .then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText)
+      }
+
+      return response.json()
+    })
+    .then((response) => {
+      response.forEach((task) => {
+        const title = document.createElement('td')
+        title.innerHTML = `<p>${task.title}</p>`
+
+        const actions = document.createElement('td')
+        actions.classList.add('has-text-right')
+        actions.innerHTML = `<button class="button is-small is-primary" id="deleteTask${task.id}" onclick="completeTask('${task.id}');"><span class="icon is-small"><i class="fas fa-check"></i></span></button>`
+
+        const row = document.createElement('tr')
+        row.appendChild(title)
+        row.appendChild(actions)
+
+        tasksList.appendChild(row)
+      })
+    })
+    .catch(() => {
+      tasksListMsg.textContent = 'Wystąpił błąd podczas pobierania listy zadań. Spróbuj ponownie później.'
+      tasksListMsg.classList.add('is-danger')
+    })
+}
 
 const completeTask = (id) => {
   tasksListMsg.classList.remove('is-danger')
@@ -81,42 +115,6 @@ addTaskForm.addEventListener('submit', (event) => {
         addTaskMsg.classList.remove('is-hidden')
       })
   }, 1000)
-
-
-  const listTasks = async () => {
-    tasksList.innerHTML = ''
-    tasksListMsg.classList.remove('is-danger')
-    tasksListMsg.classList.add('is-hidden')
-  
-    fetch('/api/tasks')
-      .then((response) => {
-        if (!response.ok) {
-          throw Error(response.statusText)
-        }
-  
-        return response.json()
-      })
-      .then((response) => {
-        response.forEach((task) => {
-          const title = document.createElement('td')
-          title.innerHTML = `<p>${task.title}</p>`
-  
-          const actions = document.createElement('td')
-          actions.classList.add('has-text-right')
-          actions.innerHTML = `<button class="button is-small is-primary" id="deleteTask${task.id}" onclick="completeTask('${task.id}');"><span class="icon is-small"><i class="fas fa-check"></i></span></button>`
-  
-          const row = document.createElement('tr')
-          row.appendChild(title)
-          row.appendChild(actions)
-  
-          tasksList.appendChild(row)
-        })
-      })
-      .catch(() => {
-        tasksListMsg.textContent = 'Wystąpił błąd podczas pobierania listy zadań. Spróbuj ponownie później.'
-        tasksListMsg.classList.add('is-danger')
-      })
-  }
   
   listTasks()
 })
